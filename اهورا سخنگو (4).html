@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>اهورا سخنگو</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap">
+<style>
+:root{--bg:#fff4dc;--fg:#2b2140;--card:#ffffff;--soft:#f3e6c4;--line:#2b2140;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1430;--fg:#fff1d6;--card:#2a2046;--soft:#3a2d5e;--line:#fff1d6;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1b1430;--fg:#fff1d6;--card:#2a2046;--soft:#3a2d5e;--line:#fff1d6;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Vazirmatn",Tahoma,"Segoe UI",sans-serif;min-height:100vh}
+#wrap{max-width:560px;margin:0 auto;padding:16px 14px 40px}
+.hd{display:flex;align-items:center;gap:10px;justify-content:center;margin:6px 0 14px}
+.hd h1{font-size:28px;font-weight:900;margin:0}
+.logo{font-size:38px}
+.stage{position:relative;background:var(--card);border:3px solid var(--line);border-radius:26px;box-shadow:0 6px 0 var(--line);overflow:hidden;aspect-ratio:9/12;display:flex;align-items:center;justify-content:center}
+.stage video{width:100%;height:100%;object-fit:contain;background:#000;display:none}
+.stage.on video{display:block}
+.stage.on .ph{display:none}
+.ph{padding:20px;text-align:center;font-size:20px;font-weight:700;line-height:1.8}
+.now{text-align:center;font-weight:700;min-height:28px;margin:12px 0 4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.card{position:relative;background:var(--card);border:3px solid var(--line);border-radius:20px;padding:8px;box-shadow:0 4px 0 var(--line)}
+.pb{width:100%;border:0;border-radius:14px;background:var(--c);color:#fff;font:900 17px "Vazirmatn",Tahoma,sans-serif;padding:16px 8px;cursor:pointer;text-shadow:0 1px 0 rgba(0,0,0,.3)}
+.pb:active{transform:scale(.96)}
+.card:not(.has) .pb{opacity:.55}
+.card.has::after{content:"✓";position:absolute;top:-10px;inset-inline-start:-6px;background:#2ecc71;color:#fff;border:2px solid var(--line);border-radius:50%;width:26px;height:26px;display:grid;place-items:center;font-weight:900;font-size:14px}
+.row{display:flex;gap:6px;margin-top:8px}
+.up,.rm{flex:1;text-align:center;background:var(--soft);border-radius:10px;padding:8px 4px;font-size:13px;font-weight:700;cursor:pointer;border:0;color:var(--fg);font-family:inherit}
+.rm{flex:0 0 38px}
+.add{display:flex;gap:8px;margin-top:16px}
+.add input{flex:1;min-width:0;border:3px solid var(--line);border-radius:14px;padding:10px 12px;font:700 15px "Vazirmatn",Tahoma,sans-serif;background:var(--card);color:var(--fg)}
+.btn{border:3px solid var(--line);border-radius:14px;background:#ffd23f;color:#2b2140;font:900 16px "Vazirmatn",Tahoma,sans-serif;padding:10px 16px;cursor:pointer;box-shadow:0 4px 0 var(--line)}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--line)}
+.save{width:100%;margin-top:22px;background:#2ec4b6;padding:14px}
+#msg{text-align:center;min-height:26px;margin-top:12px;font-weight:700}
+.tip{font-size:13px;opacity:.75;text-align:center;margin-top:8px;line-height:1.8}
+.chat{margin-top:20px;background:var(--card);border:3px solid var(--line);border-radius:22px;padding:12px;box-shadow:0 4px 0 var(--line)}
+.chat h2{margin:0 0 8px;font-size:18px;font-weight:900}
+#log{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.b{padding:8px 12px;border-radius:14px;max-width:88%;line-height:1.8;font-weight:700;font-size:15px}
+.b.me{background:var(--soft);align-self:flex-start}
+.b.ai{background:#ffd23f;color:#2b2140;align-self:flex-end}
+.chat .add{margin-top:0}
+.mic{flex:0 0 46px;padding:10px 0}
+.voice{width:100%;margin-bottom:8px;background:#ff7eb6}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="app"></div>
+  <div id="tools">
+    <div class="chat">
+      <h2>🗣️ با اهورا حرف بزن</h2>
+      <button class="btn voice" id="voice" hidden>🎙️ گفتگوی صوتی با اهورا</button>
+      <div id="log"></div>
+      <div class="add"><input id="q" placeholder="به اهورا بگو…" maxlength="200"><button class="btn mic" id="mic" hidden>🎤</button><button class="btn" id="ask">بگو</button></div>
+    </div>
+    <div class="add"><input id="newTitle" placeholder="اسم سکشن جدید…" maxlength="30"><button class="btn" id="addBtn">➕ اضافه</button></div>
+    <button class="btn save" id="saveBtn">💾 ذخیره به‌صورت HTML</button>
+    <div id="msg"></div>
+    <div class="tip">برای هر سکشن ویدیو رو انتخاب کن. ویدیوها فقط تا وقتی صفحه بازه می‌مونن؛ با «ذخیره» یه فایل HTML کامل با همهٔ ویدیوها می‌گیری.</div>
+  </div>
+</div>
+<script>
+function app(D, editable){
+  var root = document.getElementById('app');
+  root.innerHTML = '';
+  function el(t, c, x){ var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  var head = el('div', 'hd');
+  head.append(el('div', 'logo', '🧒'), el('h1', '', D.title));
+  var stage = el('div', 'stage');
+  var v = document.createElement('video');
+  v.controls = true; v.playsInline = true;
+  stage.append(v, el('div', 'ph', 'یه دکمه بزن تا اهورا شروع کنه 👇'));
+  var now = el('div', 'now', '');
+  var grid = el('div', 'grid');
+  function play(s){
+    if (!s.url){ now.textContent = 'برای «' + s.title + '» هنوز ویدیویی نذاشتی'; return; }
+    stage.classList.add('on');
+    v.src = s.url;
+    v.play().catch(function(){});
+    now.textContent = s.emoji + ' ' + s.title;
+  }
+  if (editable) window.playSection = function(i){ if (D.sections[i]) play(D.sections[i]); };
+  D.sections.forEach(function(s, i){
+    var card = el('div', 'card' + (s.url ? ' has' : ''));
+    card.style.setProperty('--c', s.color);
+    var b = el('button', 'pb', s.emoji + ' ' + s.title);
+    b.onclick = function(){ play(s); };
+    card.append(b);
+    if (editable){
+      var row = el('div', 'row');
+      var lab = el('label', 'up', s.url ? '🔁 عوض کردن' : '📁 انتخاب ویدیو');
+      var inp = document.createElement('input');
+      inp.type = 'file'; inp.accept = 'video/*'; inp.hidden = true;
+      inp.onchange = function(){
+        var f = inp.files[0]; if (!f) return;
+        if (s.url && s.file) URL.revokeObjectURL(s.url);
+        s.file = f; s.url = URL.createObjectURL(f);
+        card.classList.add('has');
+        lab.childNodes[0].textContent = '🔁 عوض کردن';
+        play(s);
+      };
+      lab.append(inp);
+      var rm = el('button', 'rm', '✕');
+      rm.title = 'حذف سکشن';
+      rm.onclick = function(){ D.sections.splice(i, 1); app(D, true); };
+      row.append(lab, rm);
+      card.append(row);
+    }
+    grid.append(card);
+  });
+  root.append(head, stage, now, grid);
+}
+
+var COLORS = ['#ff9f1c', '#2ec4b6', '#e63946', '#3a86ff', '#9b5de5', '#f15bb5', '#00a878'];
+var D = {
+  title: 'اهورا سخنگو',
+  sections: [
+    { title: 'معرفی: من اهورام', emoji: '👋', color: COLORS[0] },
+    { title: 'منو اجرا کن', emoji: '▶️', color: COLORS[1] },
+    { title: 'لباس قرمز', emoji: '🔴', color: COLORS[2] },
+    { title: 'لباس آبی', emoji: '🔵', color: COLORS[3] },
+    { title: 'رقص', emoji: '💃', color: COLORS[4] }
+  ]
+};
+app(D, true);
+
+var msgEl = document.getElementById('msg');
+function msg(t){ msgEl.textContent = t; }
+
+document.getElementById('addBtn').onclick = function(){
+  var inp = document.getElementById('newTitle');
+  var t = inp.value.trim();
+  if (!t) return;
+  var n = D.sections.length;
+  D.sections.push({ title: t, emoji: '⭐', color: COLORS[n % COLORS.length] });
+  inp.value = '';
+  app(D, true);
+};
+
+function toURL(file){
+  return new Promise(function(res, rej){
+    var r = new FileReader();
+    r.onload = function(){ res(r.result); };
+    r.onerror = function(){ rej(new Error('read')); };
+    r.readAsDataURL(file);
+  });
+}
+
+document.getElementById('saveBtn').onclick = async function(){
+  var btn = this;
+  var out = { title: D.title, sections: [] };
+  btn.disabled = true;
+  msg('⏳ دارم ویدیوها رو توی فایل می‌ذارم…');
+  try {
+    for (var i = 0; i < D.sections.length; i++){
+      var s = D.sections[i];
+      if (!s.file) continue;
+      out.sections.push({ title: s.title, emoji: s.emoji, color: s.color, url: await toURL(s.file) });
+    }
+    if (!out.sections.length){ msg('اول برای حداقل یه سکشن ویدیو انتخاب کن.'); btn.disabled = false; return; }
+    var css = document.querySelector('style').textContent;
+    var j = JSON.stringify(out).replace(/</g, '\\u003c');
+    var html = '<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">' +
+      '<title>' + out.title + '</title>' +
+      '<style>' + css + '</style></head><body><div id="wrap"><div id="app"></div></div>' +
+      '<script>var app=' + app.toString() + ';app(' + j + ',false);<\/script></body></html>';
+    var dl = await claude.use('downloads');
+    if (!dl){ msg('ذخیره‌کردن توی این نمایش فعال نیست.'); btn.disabled = false; return; }
+    await dl.save({ filename: 'ahura-talking.html', data: new Blob([html], { type: 'text/html' }) });
+    msg('✅ فایل ذخیره شد.');
+  } catch (e) {
+    var c = e && e.code;
+    msg(c === 'declined' ? 'ذخیره لغو شد.' : c === 'too_large' ? 'ویدیوها زیادی حجیمن؛ کلیپ‌های کوتاه‌تر یا کم‌حجم‌تر بذار.' : 'ذخیره انجام نشد، دوباره امتحان کن.');
+  }
+  btn.disabled = false;
+};
+
+var logEl = document.getElementById('log'), qEl = document.getElementById('q'), askBtn = document.getElementById('ask');
+function line(who, t){ var d = document.createElement('div'); d.className = 'b ' + who; d.textContent = t; logEl.append(d); logEl.scrollTop = logEl.scrollHeight; return d; }
+line('ai', 'سلام! من اهورام! چی می‌خوای بگی؟ 😄');
+function speak(t){ return new Promise(function(res){ speakOld(t); var n = 0; var iv = setInterval(function(){ n++; if (!('speechSynthesis' in window) || (!speechSynthesis.speaking && !speechSynthesis.pending && n > 2) || n > 150){ clearInterval(iv); res(); } }, 200); }); }
+function speakOld(t){
+  try {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(t);
+    u.lang = 'fa-IR'; u.pitch = 1.6; u.rate = 1.05;
+    var vs = speechSynthesis.getVoices().filter(function(x){ return /^fa/i.test(x.lang); });
+    if (vs.length) u.voice = vs[0];
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function parseR(t){
+  t = String(t || '');
+  var a = t.indexOf('{'), b = t.lastIndexOf('}');
+  if (a >= 0 && b > a){ try { return JSON.parse(t.slice(a, b + 1)); } catch (e) {} }
+  return { say: t.replace(/[{}"]/g, '').trim().slice(0, 200), play: null };
+}
+function localAnswer(q, wait, e){
+  var code = String((e && (e.code || e.message)) || e || 'err').slice(0, 60);
+  var rules = [['برقص|رقص', 'رقص'], ['قرمز', 'قرمز'], ['آبی', 'آبی'], ['اجرا|بازی', 'اجرا'], ['سلام|اهورا|اسمت|کی هستی', 'معرفی']];
+  var idx = -1;
+  rules.forEach(function(r){
+    if (idx >= 0 || !new RegExp(r[0]).test(q)) return;
+    D.sections.forEach(function(s, i){ if (idx < 0 && s.title.indexOf(r[1]) >= 0) idx = i; });
+  });
+  var say = idx < 0 ? 'هیهی! من اهورام! بگو برقصم یا لباسم رو قرمز یا آبی کنم 😄' : 'باشه! الان نشونت می‌دم 😄';
+  wait.textContent = say + '  [' + code + ']';
+  if (idx >= 0 && D.sections[idx].url && window.playSection) window.playSection(idx); else speak(say);
+}
+var busy = false;
+async function ask(){
+  var q = qEl.value.trim();
+  if (!q || busy) return;
+  busy = true; askBtn.disabled = true; qEl.value = '';
+  line('me', q);
+  var wait = line('ai', '…');
+  try {
+    var sample = await claude.use('sample');
+    if (!sample){ wait.textContent = 'اینجا هنوز نمی‌تونم جواب بدم 😅'; busy = false; askBtn.disabled = false; return; }
+    var list = D.sections.map(function(s, i){ return i + ': ' + s.title; }).join('\n');
+    var prompt = 'You are "Ahura" (اهورا), a cheerful, funny kid-like talking character in a Talking-Tom-style app. ' +
+      'Reply ONLY in short, simple, friendly Persian (1-2 short sentences, playful, kid-safe, no scary or adult topics, never ask for personal info or address). ' +
+      'If the viewer asks you to do one of these actions, pick its number, otherwise use null:\n' + list + '\n' +
+      'Return ONLY JSON: {"say":"<your reply>","play":<number or null>}.\nViewer said: ' + q;
+    var tx = await sample(prompt, { cache: false });
+    var r = parseR(tx && tx.text);
+    var say = String((r && r.say) || 'هیهی! دوباره بگو 😄');
+    wait.textContent = say;
+    var pl = r && typeof r.play === 'number' && D.sections[r.play] && D.sections[r.play].url;
+    if (pl && window.playSection) window.playSection(r.play); else await speak(say);
+  } catch (e) {
+    localAnswer(q, wait, e); if (0) wait.textContent = e && e.code === 'not_granted' ? 'اجازه ندادی من حرف بزنم 🙈' : 'یه لحظه گیج شدم، دوباره بگو! (' + ((e && e.code) || 'err') + ')';
+  }
+  busy = false; askBtn.disabled = false;
+  if (vm !== 'off') listen();
+}
+askBtn.onclick = ask;
+qEl.onkeydown = function(e){ if (e.key === 'Enter') ask(); };
+var vm = 'off', dict = null, rec = null;
+var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+var voiceBtn = document.getElementById('voice');
+var VTXT = '🎙️ گفتگوی صوتی با اهورا';
+if (SR) voiceBtn.hidden = false;
+function stopVoice(){
+  vm = 'off'; voiceBtn.textContent = VTXT;
+  try { speechSynthesis.cancel(); } catch (e) {}
+  try { if (rec) rec.abort(); } catch (e) {}
+  if (dict) dict.stop().catch(function(){});
+}
+function waitTap(){ if (vm === 'off') return; vm = 'waiting'; voiceBtn.textContent = '🎤 بزن و حرف بزن'; }
+function listen(){
+  vm = 'listening'; voiceBtn.textContent = '👂 دارم گوش می‌دم… (بزن تا تموم شه)';
+  if (dict){ dict.start({ language: 'fa-IR' }).catch(waitTap); return; }
+  if (!SR){ stopVoice(); return; }
+  try {
+    rec = new SR(); rec.lang = 'fa-IR';
+    rec.onresult = function(e){ if (busy) return; qEl.value = e.results[0][0].transcript; ask(); };
+    rec.onerror = function(e){ if (e.error === 'no-speech' && vm === 'listening') setTimeout(listen, 300); else waitTap(); };
+    rec.start();
+  } catch (e) { waitTap(); }
+}
+voiceBtn.onclick = function(){ if (vm === 'listening') stopVoice(); else listen(); };
+(async function(){
+  try {
+    var d = await claude.use('dictation');
+    if (!d) return;
+    dict = d; voiceBtn.hidden = false;
+    var mic = document.getElementById('mic');
+    mic.hidden = false;
+    d.onFinal(function(e){ if (busy) return; d.stop().catch(function(){}); qEl.value = (qEl.value + ' ' + e.text).trim(); ask(); });
+    mic.onclick = function(){ d.start({ language: 'fa-IR' }).catch(function(){}); };
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
